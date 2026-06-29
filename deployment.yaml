@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-app-deployment
+  labels:
+    app: otus-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: otus-app
+  template:
+    metadata:
+      labels:
+        app: otus-app
+    spec:
+      containers:
+      - name: otus-app-container
+        image: olgaber0605/otus-healthcheck:v1.0
+        ports:
+        - containerPort: 8000
+        # Проверка: жива ли программа внутри контейнера
+        livenessProbe:
+          httpGet:
+            path: /health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        # Проверка: готова ли программа принимать клиентов
+        readinessProbe:
+          httpGet:
+            path: /health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
